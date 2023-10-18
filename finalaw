@@ -1,0 +1,20 @@
+import random
+num = random.randint(1, 100)
+
+a = 0
+b = 100
+while True:
+    
+    num1 = int(input("猜一個數字"))
+    if num1 == num:
+        print("猜對了!")
+        break
+    elif num1 > num and num1 < b:
+        b = num1
+        print(str(a)+"到"+str(b))
+    elif num1 < num and num1 > a:
+        a = num1
+        print(str(a)+"到"+str(b))
+    else :
+        print("請輸入範圍內的數字")
+      
