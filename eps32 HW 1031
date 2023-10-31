@@ -1,0 +1,36 @@
+const byte LED[] = {4, 0, 2, 15};
+
+void setup() {
+  for (int i=0;i<4;i++){
+    pinMode(LED[i], OUTPUT);
+  }
+}
+
+void loop() {
+  // light 1=>3 scan
+  for (int i=0;i<3;i++){
+    for (int n=0;n<3;n++){digitalWrite(LED[n], LOW);}
+    digitalWrite(LED[i], HIGH);
+    delay(100);
+  }
+  // flash
+  for (int i=0; i<3; i++){
+    for (int n=0;n<4;n++){digitalWrite(LED[n], HIGH);}
+    delay(50);
+    for (int n=0;n<4;n++){digitalWrite(LED[n], LOW);}
+    delay(50);
+  }
+  // light 3=>1 scan
+  for (int i=2;i>=0;i--){
+    for (int n=0;n<3;n++){digitalWrite(LED[n], LOW);}
+    digitalWrite(LED[i], HIGH);
+    delay(100);
+  }
+  // flash
+  for (int i=0; i<3; i++){
+    for (int n=0;n<4;n++){digitalWrite(LED[n], HIGH);}
+    delay(50);
+    for (int n=0;n<4;n++){digitalWrite(LED[n], LOW);}
+    delay(50);
+  }
+}
