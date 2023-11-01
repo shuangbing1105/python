@@ -1,0 +1,14 @@
+num = 0
+a = []
+b= 0
+total = 0
+while True:
+    num = str(input())
+
+    if num == "end":
+        break
+    else:
+        num = int(num)
+        a.append(num)
+
+print (a,"總和:"+str(sum(a)))
