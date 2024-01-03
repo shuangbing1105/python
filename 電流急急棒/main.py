@@ -5,17 +5,23 @@ W = 720
 H = 480
 
 BLACK = (0,0,0)
-WRITE = (255,255,255)
+WHITE = (255,255,255)
 RED = (255,0,0)
 GREEN = (0,255,0)
 BLUE = (0,0,255)
 
-speedx = 5
-speedy = 5
+speedx = 2
+speedy = 2
 start_point = (20,240)
 end_point = (700,240)
-max_turn_angle = 90
-max_length = 200
+second_point = (200,240)
+second_point2 = (200,75)
+third_point = (500,75)
+third_point2 = (500,200)
+forth_point = (600,200)
+forth_point2 = (600,240)
+end_point2 = (700,240)
+
 thickness = 30
 
 # 初始化 Pygame
@@ -27,10 +33,11 @@ pygame.display.set_caption("電流急急棒")#標題
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((20,20))
-        self.image.fill(BLUE)
+        self.image = pygame.Surface((20,20))# 角色大小
+        self.image.fill(BLUE)#角色顏色
         self.rect = self.image.get_rect()
         self.rect.center = (W/2,H/2)
+    #讓角色移動
     def update(self):
         key_pressed = pygame.key.get_pressed()
         if key_pressed[pygame.K_RIGHT]:
@@ -49,53 +56,36 @@ class Player(pygame.sprite.Sprite):
             self.rect.top = 0
         if self.rect.bottom > H:
             self.rect.bottom = H
-class Wall(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
-        self.center = (360,240)
-        self.radius = 5
-        self.start_angle = 0
-        self.end_angle = 90
 
-class Line(pygame.sprite.Sprite):
-    def __init__(self, start_point, end_point, max_turn_angle, max_length, thickness, color):
-        super().__init__()
-        self.start_point = start_point
-        self.end_point = end_point
-        self.max_turn_angle = max_turn_angle
-        self.max_length = max_length
-        self.thickness = thickness
-        self.color = WRITE
+class backgroud:
+    def __init__(self,screen,color,width,points):
+        self.screen = screen
+        self.color = color
+        self.width = width
+        self.points = points
 
-    def update(self):
-        pass
+    def draw(self):
+        square = pygame.Surface((30, 30))
+        square.fill(self.color)
+        square_rect = square.get_rect(center=(self.points[0][1],self.points[0][0]))
+        pygame.draw.lines(self.screen, self.color, False, self.points, self.width)
+        print (self.points)
 
-    def draw(self, screen):
-        # 計算線條的點列表
-        points = []
-        points.append(self.start_point)
-        while points[-1] != self.end_point:
-            # 計算下一個點的座標
-            next_point = points[-1] + (random.randint(-10, 10), random.randint(-10, 10))
+    def add_point(self,point):
+        self.points.append(point)
 
-            # 如果下一個點不在螢幕內，則返回起點
-            if next_point[0] < 0 or next_point[0] > W or next_point[1] < 0 or next_point[1] > H:
-                next_point = self.start_point
-
-            # 計算下一個點的角度
-            next_angle = random.randint(0, 360)
-
-            # 如果角度太大，則調整角度
-            if abs(next_angle - points[-1][0]) > self.max_turn_angle:
-                next_angle = points[-1][0] + (random.randint(-30, 30))
-
-            # 將下一個點新增到點列表
-            points.append((next_point[0], next_point[1]))
+wall = backgroud(screen,WHITE,thickness,[start_point])
+wall.add_point(second_point)
+wall.add_point(second_point2)
+wall.add_point(third_point)
+wall.add_point(third_point2)
+wall.add_point(forth_point)
+wall.add_point(forth_point2)
+wall.add_point(end_point2)
 
 all_sprites = pygame.sprite.Group()
 Player = Player()
-Line = Line(start_point,end_point,max_turn_angle,max_length,thickness,WRITE)
-all_sprites.add(Player,Line)
+all_sprites.add(Player)
 
 #遊戲迴圈
 running = True
@@ -111,5 +101,6 @@ while running:
     #顯示畫面
     screen.fill(BLACK) 
     all_sprites.draw(screen)
+    wall.draw()
     pygame.display.update()
 pygame.quit()
