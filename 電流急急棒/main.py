@@ -1,5 +1,5 @@
 import pygame
-import random
+
 FPS = 60
 W = 720
 H = 480
@@ -36,7 +36,8 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.Surface((20,20))# 角色大小
         self.image.fill(BLUE)#角色顏色
         self.rect = self.image.get_rect()
-        self.rect.center = (W/2,H/2)
+        self.rect.center = (10,H/2)
+    
     #讓角色移動
     def update(self):
         key_pressed = pygame.key.get_pressed()
@@ -57,22 +58,52 @@ class Player(pygame.sprite.Sprite):
         if self.rect.bottom > H:
             self.rect.bottom = H
 
+    def collide_color(self):
+        pygame.sprite.Sprite.__init__(self)
+        pixel = pygame.PixelArray(self.rect)
+        apixel = pixel[self.rect.x:self.rect.x+self.rect.W,self.rect.y:self.rect.y+self.rect.H]
+        pygame.PixelArray.close(pixel)
+        return self.color in apixel
+
+class start(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((20,480))# 起點大小
+        self.image.fill(RED)#起點顏色
+        self.rect = self.image.get_rect()
+        self.rect.center = (10,H/2)
+
+class end(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((20,480))# 起點大小
+        self.image.fill(GREEN)#起點顏色
+        self.rect = self.image.get_rect()
+        self.rect.center = (710,H/2)
+
 class backgroud:
     def __init__(self,screen,color,width,points):
         self.screen = screen
         self.color = color
         self.width = width
         self.points = points
-
+        
+            
     def draw(self):
-        square = pygame.Surface((30, 30))
-        square.fill(self.color)
-        square_rect = square.get_rect(center=(self.points[0][1],self.points[0][0]))
+        
         pygame.draw.lines(self.screen, self.color, False, self.points, self.width)
-        print (self.points)
+        for i in range(1,7):
+            pygame.draw.rect(self.screen,self.color,[self.points[i][0]-14,self.points[i][1]-14,30,30],0)
 
+            
     def add_point(self,point):
         self.points.append(point)
+
+def collide_color(aSurface,aRect,aColor):
+    pixel = pygame.PixelArray(aSurface)
+    apixel = pixel[aRect.x:aRect.x+aRect.W,aRect.y:aRect.y+aRect.H]
+    pygame.PixelArray.close(pixel)
+    return aColor in apixel
 
 wall = backgroud(screen,WHITE,thickness,[start_point])
 wall.add_point(second_point)
@@ -84,8 +115,10 @@ wall.add_point(forth_point2)
 wall.add_point(end_point2)
 
 all_sprites = pygame.sprite.Group()
+Start = start()
+End = end()
 Player = Player()
-all_sprites.add(Player)
+all_sprites.add(Start,End,Player)
 
 #遊戲迴圈
 running = True
@@ -100,7 +133,11 @@ while running:
 
     #顯示畫面
     screen.fill(BLACK) 
-    all_sprites.draw(screen)
     wall.draw()
+    all_sprites.draw(screen)
+
+    if collide_color():
+        print (f'GAME OVER')
+
     pygame.display.update()
 pygame.quit()
