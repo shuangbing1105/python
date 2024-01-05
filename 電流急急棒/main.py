@@ -10,8 +10,8 @@ RED = (255,0,0)
 GREEN = (0,255,0)
 BLUE = (0,0,255)
 
-speedx = 2
-speedy = 2
+speedx = 1
+speedy = 1
 start_point = (20,240)
 end_point = (700,240)
 second_point = (200,240)
@@ -22,7 +22,7 @@ forth_point = (600,200)
 forth_point2 = (600,240)
 end_point2 = (700,240)
 
-thickness = 30
+thickness = 25
 
 # 初始化 Pygame
 pygame.init()
@@ -57,14 +57,20 @@ class Player(pygame.sprite.Sprite):
             self.rect.top = 0
         if self.rect.bottom > H:
             self.rect.bottom = H
-
-    def collide_color(self):
-        pygame.sprite.Sprite.__init__(self)
-        pixel = pygame.PixelArray(self.rect)
-        apixel = pixel[self.rect.x:self.rect.x+self.rect.W,self.rect.y:self.rect.y+self.rect.H]
-        pygame.PixelArray.close(pixel)
-        return self.color in apixel
-
+    #判定主角是否出界
+    def collide(self):
+        a = (self.rect.left < second_point[0]-(thickness/2-1) and self.rect.right > start_point[0] and self.rect.top <second_point[1]-(thickness/2)-1)
+        b = (self.rect.left < third_point[0]-(thickness/2-1) and self.rect.right > second_point[0] and self.rect.top <third_point[1]-(thickness/2)-1)
+        c = (self.rect.left < forth_point[0]-(thickness/2-1) and self.rect.right > third_point[0]+(thickness/2+1) and self.rect.top <forth_point[1]-(thickness/2)-1)
+        d = (self.rect.left < end_point[0]-(thickness/2-1) and self.rect.right > forth_point[0]+(thickness/2+1) and self.rect.top <end_point[1]-(thickness/2)-1)
+        if (a or b or c or d ):
+            print ("test")
+        e = (self.rect.left < second_point[0] and self.rect.right > start_point[0]+(thickness/2+1) and self.rect.bottom >second_point[1]+(thickness/2)+1)
+        f = (self.rect.left < third_point[0]-(thickness/2-1) and self.rect.right > second_point[0]+(thickness/2+1) and self.rect.bottom >third_point[1]+(thickness/2)+1)
+        g = (self.rect.left < forth_point[0]-(thickness/2-1) and self.rect.right > third_point[0]-(thickness/2-1) and self.rect.bottom >forth_point[1]+(thickness/2)+1)
+        h = (self.rect.left < end_point[0] and self.rect.right > forth_point[0]-(thickness/2-1) and self.rect.bottom >end_point[1]+(thickness/2)+1)
+        if (e or f or g or h):
+            print ("e")
 class start(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
@@ -93,7 +99,7 @@ class backgroud:
         
         pygame.draw.lines(self.screen, self.color, False, self.points, self.width)
         for i in range(1,7):
-            pygame.draw.rect(self.screen,self.color,[self.points[i][0]-14,self.points[i][1]-14,30,30],0)
+            pygame.draw.rect(self.screen,self.color,[self.points[i][0]-(self.width/2-1),self.points[i][1]-(self.width/2-1),self.width,self.width],0)
 
             
     def add_point(self,point):
@@ -112,6 +118,22 @@ wall.add_point(third_point)
 wall.add_point(third_point2)
 wall.add_point(forth_point)
 wall.add_point(forth_point2)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 wall.add_point(end_point2)
 
 all_sprites = pygame.sprite.Group()
@@ -135,9 +157,8 @@ while running:
     screen.fill(BLACK) 
     wall.draw()
     all_sprites.draw(screen)
-
-    if collide_color():
-        print (f'GAME OVER')
+    Player.collide()
+    #    print (f'GAME OVER')
 
     pygame.display.update()
 pygame.quit()
